@@ -32,7 +32,7 @@ export const createCamera = (canvas: HTMLCanvasElement) => {
     let isMiddleMouseDown = false;
     let prevMouseX = 0;
     let prevMouseY = 0;
-
+    
     const onMouseDown = (event: MouseEvent) => {
         console.log('Mouse Down');
 
@@ -103,11 +103,13 @@ export const createCamera = (canvas: HTMLCanvasElement) => {
         camera.lookAt(cameraOrigin);
         camera.updateMatrix();
     }
+    updateCameraPosition();
     return {
         onMouseDown,
         onMouseUp,
         onMouseMove,
-        camera
+        camera,
+        updateCameraPosition
 
     }
 }
