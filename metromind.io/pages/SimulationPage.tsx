@@ -1,13 +1,19 @@
 import { useEffect, useRef } from 'react';
 import { createScene } from '../src/scene';
+import { createCity } from '../src/city';
 
 const SimulationPage: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     useEffect(() => {
         if (canvasRef.current) {
-            // Pass the canvas element to the createScene function
+            const city = createCity(8);
             const sceneController = createScene(canvasRef.current);
+
+            // Retrieve the scene object from the sceneController
+            const scene = sceneController.scene;
+
+            sceneController.initialize(city, scene);
             sceneController.start();
 
             // Cleanup when the component unmounts
