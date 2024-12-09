@@ -24,6 +24,7 @@ const SimulationPage: React.FC = () => {
                 display: 'block',
                  }}
         />
+        
     );
 };
 
