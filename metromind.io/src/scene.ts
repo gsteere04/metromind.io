@@ -106,9 +106,6 @@ export function createScene(canvas: HTMLCanvasElement) {
 
             // Only process mesh objects
             if (hitObject instanceof THREE.Mesh) {
-                // Log the clicked object's properties.
-                console.log('Clicked Object:', hitObject)
-                console.log('Is this a unique object? ID: ', hitObject.id);
                 // Deselect previously selected object (if any)
                 if (selectedObject && selectedObject.material instanceof THREE.MeshLambertMaterial) {
                     selectedObject.material.emissive.setHex(0x000000); // Reset emissive color
@@ -120,6 +117,11 @@ export function createScene(canvas: HTMLCanvasElement) {
                 // Highlight the clicked object
                 if (selectedObject.material instanceof THREE.MeshLambertMaterial) {
                     selectedObject.material.emissive.setHex(0x555555); // Change emissive color to highlight
+                }
+                if (selectedObject.userData) {
+                    console.log('User Data:', selectedObject.userData);
+                } else {
+                    console.log('No userData found for the selected object!');
                 }
             }
         }
