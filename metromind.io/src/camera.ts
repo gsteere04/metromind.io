@@ -34,7 +34,6 @@ export const createCamera = (canvas: HTMLCanvasElement) => {
     let prevMouseY = 0;
     
     const onMouseDown = (event: MouseEvent) => {
-        console.log('Mouse Down');
 
         if (event.button === LEFT_MOUSE_BUTTON) {
             isLeftMouseDown = true;
@@ -48,7 +47,6 @@ export const createCamera = (canvas: HTMLCanvasElement) => {
     };
 
     const onMouseUp = (event: MouseEvent) => {
-        console.log('Mouse Up');
 
         if (event.button === LEFT_MOUSE_BUTTON) {
             isLeftMouseDown = false;
@@ -62,7 +60,6 @@ export const createCamera = (canvas: HTMLCanvasElement) => {
     };
 
     const onMouseMove = (event: MouseEvent ) => {
-        console.log('Mouse Move');
 
         const deltaX = (event.clientX - prevMouseX);
         const deltaY = (event.clientY - prevMouseY);

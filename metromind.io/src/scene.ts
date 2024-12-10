@@ -4,7 +4,7 @@ import { Tile } from './city.ts';
 import { createAssetInstance } from './assets.ts';
 
 export function createScene(canvas: HTMLCanvasElement) {
-    const { camera, onMouseDown, onMouseUp, onMouseMove} = createCamera(canvas);
+    const { camera, onMouseDown: cameraOnMouseDown, onMouseUp, onMouseMove } = createCamera(canvas);
     const renderer = new THREE.WebGLRenderer({ canvas });
     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 
@@ -13,6 +13,10 @@ export function createScene(canvas: HTMLCanvasElement) {
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color('grey'); // Set the scene background color
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let selectedObject: THREE.Mesh | undefined = undefined;
 
     let terrain: THREE.Mesh[][] = []; // Array for terrain meshes
     let buildings: THREE.Mesh[][] = []; // Array for building meshes
@@ -31,23 +35,32 @@ export function createScene(canvas: HTMLCanvasElement) {
                 const terrainId = city.data[x][y].terrainId;
 
                 if (validTerrainIds.includes(terrainId)) {
+                    const grassMaterial = new THREE.MeshLambertMaterial({ color: 0x00ff00})
                     const grassMesh = createAssetInstance(terrainId as 'grass', x, y);
 
-                
-                    if (grassMesh){
+                    if (grassMesh) {
+                        grassMesh.material = grassMaterial;
                         scene.add(grassMesh);
                         column.push(grassMesh);
                     }
-                }   else {
-                    console.warn(`Invalid terrainId: ${terrainId} at position (${x}, ${y})`)
+                } else {
+                    console.warn(`Invalid terrainId: ${terrainId} at position (${x}, ${y})`);
                 }
+
                 // If this tile has a building, add it to the scene
                 const tile = city.data[x][y];
                 if (tile.building === 'building') {
+                    const buildingMaterial = new THREE.MeshLambertMaterial();
+
                     const buildingMesh = createAssetInstance('residential', x, y);
-                    if (buildingMesh){
-                    scene.add(buildingMesh);
-                    column.push(buildingMesh);
+                    if (buildingMesh) {
+                        if (buildingMesh.material instanceof THREE.MeshLambertMaterial) {
+                            const assetColor = buildingMesh.material.color;
+                            buildingMaterial.color.set(assetColor)
+                        }
+                        buildingMesh.material = buildingMaterial;
+                        scene.add(buildingMesh);
+                        column.push(buildingMesh);
                     }
                 }
             }
@@ -63,7 +76,7 @@ export function createScene(canvas: HTMLCanvasElement) {
             new THREE.AmbientLight(0xffffff, 0.2),
             new THREE.DirectionalLight(0xffffff, 0.3),
             new THREE.DirectionalLight(0xffffff, 0.3),
-            new THREE.DirectionalLight(0xffffff, 0.3)
+            new THREE.DirectionalLight(0xffffff, 0.3),
         ];
 
         lights[1].position.set(0, 1, 0);
@@ -77,16 +90,54 @@ export function createScene(canvas: HTMLCanvasElement) {
         renderer.render(scene, camera);
     };
 
+    const handleMouseDown = (event: MouseEvent) => {
+        // Custom logic for handleMouseDown
+        mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+        mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+
+        // Set up raycaster
+        raycaster.setFromCamera(mouse, camera);
+
+        // Get the intersected objects
+        const intersections = raycaster.intersectObjects(scene.children, false);
+
+        if (intersections.length > 0) {
+            const hitObject = intersections[0].object;
+
+            // Only process mesh objects
+            if (hitObject instanceof THREE.Mesh) {
+                // Log the clicked object's properties.
+                console.log('Clicked Object:', hitObject)
+                console.log('Is this a unique object? ID: ', hitObject.id);
+                // Deselect previously selected object (if any)
+                if (selectedObject && selectedObject.material instanceof THREE.MeshLambertMaterial) {
+                    selectedObject.material.emissive.setHex(0x000000); // Reset emissive color
+                }
+
+                // Set the new selected object
+                selectedObject = hitObject;
+
+                // Highlight the clicked object
+                if (selectedObject.material instanceof THREE.MeshLambertMaterial) {
+                    selectedObject.material.emissive.setHex(0x555555); // Change emissive color to highlight
+                }
+            }
+        }
+
+        // Call the camera's onMouseDown method (if needed)
+        cameraOnMouseDown(event);
+    };
+
     // Add event listeners
     const addEventListeners = () => {
-        canvas.addEventListener('mousedown', onMouseDown);
+        canvas.addEventListener('mousedown', handleMouseDown);
         canvas.addEventListener('mouseup', onMouseUp);
         canvas.addEventListener('mousemove', onMouseMove);
     };
 
     // Remove event listeners
     const removeEventListeners = () => {
-        canvas.removeEventListener('mousedown', onMouseDown);
+        canvas.removeEventListener('mousedown', handleMouseDown);
         canvas.removeEventListener('mouseup', onMouseUp);
         canvas.removeEventListener('mousemove', onMouseMove);
     };
@@ -103,12 +154,12 @@ export function createScene(canvas: HTMLCanvasElement) {
         renderer.setAnimationLoop(null);
     };
 
-    return { 
-        start, 
+    return {
+        start,
         stop,
         initialize,
         scene,
         camera,
-        renderer
+        renderer,
     };
 }
