@@ -1,106 +1,191 @@
-/* General page styles */
+:root {
+    --primary-color: #1a1a1a;
+    --secondary-color: #2d2d2d;
+    --accent-color: #3498db;
+    --text-color: #ffffff;
+    --success-color: #2ecc71;
+    --warning-color: #f1c40f;
+    --danger-color: #e74c3c;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
 body, html {
     margin: 0;
     padding: 0;
-    width: 100%;
-    height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: var(--primary-color);
+    color: var(--text-color);
     overflow: hidden;
-    font-family: 'Arial', sans-serif;
-    background-color: #121212; /* Dark background for focus */
-    color: #fff;
+    height: 100vh;
 }
 
-/* Container for the canvas and toolbar */
 #simulation-container {
     position: relative;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
 }
 
-/* Canvas styles */
 canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-    background-color: #333;
-}
-
-/* Drawer container */
-#ui-toolbar-drawer {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: rgba(50, 50, 50, 0.9);
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    transition: transform 0.3s ease;
-    transform: translateX(-100%); /* Hidden by default */
-}
-
-#ui-toolbar-drawer.open {
-    transform: translateX(0); /* Slide in */
-}
-
-/* Drawer toggle button */
-#drawer-toggle {
-    position: absolute;
-    top: 10px;
+    position: fixed;
+    top: 0;
     left: 0;
-    background-color: #1e90ff;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    font-size: 14px;
-    font-weight: bold;
-    border-radius: 5px;
+    width: 100vw;
+    height: 100vh;
+}
+
+#toolbar-toggle-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+}
+
+#drawer-toggle {
+    background: rgba(45, 45, 45, 0.9);
+    color: var(--text-color);
+    padding: 12px 24px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-weight: 500;
+    transition: var(--transition);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow);
 }
 
 #drawer-toggle:hover {
-    background-color: #1c7ed6;
+    transform: translateY(-2px);
+    background: rgba(55, 55, 55, 0.9);
 }
 
-/* Button styles inside the drawer */
+#ui-toolbar-drawer {
+    position: absolute;
+    left: 0;
+    top: 70px;
+    background: rgba(45, 45, 45, 0.95);
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 220px;
+    transform: translateX(-120%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow);
+}
+
+#ui-toolbar-drawer.open {
+    transform: translateX(0);
+}
+
 .ui-button {
-    background-color: #444;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: 5px;
+    background: transparent;
+    color: var(--text-color);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 20px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-weight: 500;
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 14px;
+    position: relative;
+    overflow: hidden;
 }
 
 .ui-button:hover {
-    background-color: #555;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-color);
+    transform: translateY(-2px);
 }
 
-/* Overlay for loading state */
+.ui-button.selected {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+}
+
+.ui-button:active {
+    transform: translateY(1px);
+}
+
+#bulldoze-button {
+    border-color: var(--danger-color);
+}
+
+#bulldoze-button.selected {
+    background: var(--danger-color);
+    border-color: var(--danger-color);
+}
+
+#residential-button {
+    border-color: var(--success-color);
+}
+
+#residential-button.selected {
+    background: var(--success-color);
+    border-color: var(--success-color);
+}
+
+#commercial-button {
+    border-color: var(--warning-color);
+}
+
+#commercial-button.selected {
+    background: var(--warning-color);
+    border-color: var(--warning-color);
+}
+
 #loading-overlay {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    color: #fff;
+    width: 100vw;
+    height: 100vh;
+    background: var(--primary-color);
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 24px;
-    font-weight: bold;
-    z-index: 10;
-    display: none;
+    z-index: 2000;
+    opacity: 1;
+    transition: opacity 0.5s ease;
 }
 
-/* Show the loading overlay when needed */
 #loading-overlay.hidden {
-    display: none;
+    opacity: 0;
+    pointer-events: none;
+}
+
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.back-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(45, 45, 45, 0.9);
+    color: var(--text-color);
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.back-button:hover {
+    transform: translateY(-2px);
+    background: rgba(55, 55, 55, 0.9);
+    border-color: var(--accent-color);
 }

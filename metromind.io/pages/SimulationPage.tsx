@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { createScene } from '../src/scene';
 import { createCity } from '../src/city';
 import './styling/SimulationPage.css';
@@ -28,48 +29,23 @@ const SimulationPage: React.FC = () => {
         }
     }, []);
 
-    useEffect(() => {
-        // Perform actions based on the active tool
-        if (activeTool === 'bulldoze') {
-            console.log('Bulldoze tool is active');
-            // Trigger bulldoze logic here
-            
-        } else if (activeTool === 'residential') {
-            console.log('Residential tool is active');
-            // Trigger residential logic here
-        } else if (activeTool === 'commercial') {
-            console.log('Commercial tool is active');
-            // Trigger commercial logic here
-        } else if (activeTool === 'governmental') {
-            console.log('Governmental tool is active');
-            // Trigger governmental logic here
-        } else if (activeTool === 'roads') {
-            console.log('Road tool is active');
-            // Trigger road logic here
-        }
-    }, [activeTool]); // This effect runs whenever activeTool changes
-
     const toggleDrawer = () => setDrawerOpen((prev) => !prev);
 
     const handleToolClick = (toolId: string, e: React.MouseEvent) => {
         e.preventDefault();
         setActiveTool(toolId);
         
-        if (toolId === 'residential' && sceneController) {
-            sceneController.setSelectedTool('residential');
-        } else if (toolId === 'commercial' && sceneController) {
-            sceneController.setSelectedTool('commercial');
-        } else if (toolId === 'governmental' && sceneController) {
-            sceneController.setSelectedTool('governmental');
-        } else if (toolId === 'roads' && sceneController) {
-            sceneController.setSelectedTool('road');
-        } else if (toolId === 'bulldoze' && sceneController) {
-            sceneController.setSelectedTool('bulldoze');
+        if (sceneController) {
+            sceneController.setSelectedTool(toolId);
         }
     };
 
     return (
         <div id="simulation-container">
+            <Link to="/" className="back-button">
+                Back to Home
+            </Link>
+
             {/* Drawer toggle button */}
             <div id='toolbar-toggle-container'>
                 <div id='drawer-toggle' onClick={toggleDrawer}>
@@ -110,8 +86,8 @@ const SimulationPage: React.FC = () => {
 
                     <button
                         id='roads-button'
-                        className={`ui-button ${activeTool === 'roads' ? 'selected' : ''}`}
-                        onClick={(e) => handleToolClick('roads', e)}
+                        className={`ui-button ${activeTool === 'road' ? 'selected' : ''}`}
+                        onClick={(e) => handleToolClick('road', e)}
                     >
                         ROADS
                     </button>
