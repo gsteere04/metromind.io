@@ -38,6 +38,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci
+          npm install three react-router-dom
           npm install -D @types/three @types/react-router-dom
       - name: Build
         run: npm run build
