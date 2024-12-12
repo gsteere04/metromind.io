@@ -3,6 +3,7 @@ import { createCamera } from './camera.ts';
 import { Tile } from './city.ts';
 import { createAssetInstance } from './assets.ts';
 
+
 export function createScene(canvas: HTMLCanvasElement) {
     const { camera, onMouseDown: cameraOnMouseDown, onMouseUp, onMouseMove } = createCamera(canvas);
     const renderer = new THREE.WebGLRenderer({ canvas });
@@ -17,14 +18,17 @@ export function createScene(canvas: HTMLCanvasElement) {
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
     let selectedObject: THREE.Mesh | undefined = undefined;
+    let cityData: { size: number; data: Tile[][] } | null = null; // Store city data
 
     let terrain: THREE.Mesh[][] = []; // Array for terrain meshes
     let buildings: THREE.Mesh[][] = []; // Array for building meshes
-
-    const initialize = (city: { size: number; data: Tile[][] }, scene: THREE.Scene) => {
-        scene.clear(); // Clear scene
-        terrain = []; // Reset terrain array
-        buildings = []; // Reset buildings array
+    let onObjectSelected: (object: THREE.Mesh | Tile) => void = () => {}
+    
+        const initialize = (city: { size: number; data: Tile[][] }, scene: THREE.Scene) => {
+            cityData = city
+            scene.clear(); // Clear scene
+            terrain = []; // Reset terrain array
+            buildings = []; // Reset buildings array
 
         const validTerrainIds: string[] = ['grass', 'residential', 'commercial', 'governmental'];
 
@@ -92,6 +96,10 @@ export function createScene(canvas: HTMLCanvasElement) {
 
     const handleMouseDown = (event: MouseEvent) => {
         // Custom logic for handleMouseDown
+        if (!cityData) {
+            console.error("City Data is not initialized!");
+            return;
+        }
         mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
         mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
 
@@ -119,10 +127,15 @@ export function createScene(canvas: HTMLCanvasElement) {
                     selectedObject.material.emissive.setHex(0x555555); // Change emissive color to highlight
                 }
                 if (selectedObject.userData) {
-                    console.log('User Data:', selectedObject.userData);
+                    const { x, y } = selectedObject.userData as { x: number; y: number };
+                    const tile = cityData.data[x][y];
+                    console.log('Selected Tile:', tile);
+
+                    onObjectSelected(tile)
                 } else {
                     console.log('No userData found for the selected object!');
                 }
+
             }
         }
 
@@ -132,9 +145,9 @@ export function createScene(canvas: HTMLCanvasElement) {
 
     // Add event listeners
     const addEventListeners = () => {
-        canvas.addEventListener('mousedown', handleMouseDown);
-        canvas.addEventListener('mouseup', onMouseUp);
-        canvas.addEventListener('mousemove', onMouseMove);
+        canvas.addEventListener('mousedown', handleMouseDown.bind(scene));
+        canvas.addEventListener('mouseup', onMouseUp.bind(scene));
+        canvas.addEventListener('mousemove', onMouseMove.bind(scene));
     };
 
     // Remove event listeners
@@ -157,6 +170,7 @@ export function createScene(canvas: HTMLCanvasElement) {
     };
 
     return {
+        onObjectSelected,
         start,
         stop,
         initialize,

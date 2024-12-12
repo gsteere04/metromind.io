@@ -17,8 +17,10 @@ const SimulationPage: React.FC = () => {
             const scene = sceneController.scene;
 
             sceneController.initialize(city, scene);
+            sceneController.onObjectSelected = (tile) => {
+                console.log('Tile Data:', tile);
+            };
             sceneController.start();
-
             // Cleanup when the component unmounts
             return () => sceneController.stop();
         }
@@ -29,6 +31,7 @@ const SimulationPage: React.FC = () => {
         if (activeTool === 'bulldoze') {
             console.log('Bulldoze tool is active');
             // Trigger bulldoze logic here
+            
         } else if (activeTool === 'residential') {
             console.log('Residential tool is active');
             // Trigger residential logic here

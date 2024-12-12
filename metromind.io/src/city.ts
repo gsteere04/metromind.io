@@ -18,7 +18,7 @@ export const createCity = (size: number) => {
                 const tile: Tile = { 
                     x,
                     y,
-                    building: Math.random() > 0.7 ? 'building' : 'empty',
+                    building: '',
                     terrainId: 'grass'
                  };
 
