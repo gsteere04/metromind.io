@@ -7,24 +7,26 @@ const SimulationPage: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [activeTool, setActiveTool] = useState<string>('');
+    const [sceneController, setSceneController] = useState<any>(null);
 
     useEffect(() => {
         if (canvasRef.current) {
             const city = createCity(12);
-            const sceneController = createScene(canvasRef.current);
+            const controller = createScene(canvasRef.current);
+            setSceneController(controller);
 
-            // Retrieve the scene object from the sceneController
-            const scene = sceneController.scene;
+            // Retrieve the scene object from the controller
+            const scene = controller.scene;
 
-            sceneController.initialize(city, scene);
-            sceneController.onObjectSelected = (tile) => {
+            controller.initialize(city, scene);
+            controller.onObjectSelected = (tile) => {
                 console.log('Tile Data:', tile);
             };
-            sceneController.start();
+            controller.start();
             // Cleanup when the component unmounts
-            return () => sceneController.stop();
+            return () => controller.stop();
         }
-    }, []); // This effect runs once on mount, no dependency on activeTool
+    }, []);
 
     useEffect(() => {
         // Perform actions based on the active tool
@@ -50,8 +52,12 @@ const SimulationPage: React.FC = () => {
     const toggleDrawer = () => setDrawerOpen((prev) => !prev);
 
     const handleToolClick = (toolId: string, e: React.MouseEvent) => {
-        e.preventDefault(); // Prevent form submission or page refresh
-        setActiveTool(toolId); // Update the active tool
+        e.preventDefault();
+        setActiveTool(toolId);
+        
+        if (toolId === 'residential' && sceneController) {
+            sceneController.setSelectedTool('residential');
+        }
     };
 
     return (

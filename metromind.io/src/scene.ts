@@ -23,6 +23,7 @@ export function createScene(canvas: HTMLCanvasElement) {
     let terrain: THREE.Mesh[][] = []; // Array for terrain meshes
     let buildings: THREE.Mesh[][] = []; // Array for building meshes
     let onObjectSelected: (object: THREE.Mesh | Tile) => void = () => {}
+    let selectedTool: string | null = null;
     
         const initialize = (city: { size: number; data: Tile[][] }, scene: THREE.Scene) => {
             cityData = city
@@ -94,8 +95,12 @@ export function createScene(canvas: HTMLCanvasElement) {
         renderer.render(scene, camera);
     };
 
+    const setSelectedTool = (tool: string | null) => {
+        selectedTool = tool;
+        console.log('Selected tool:', selectedTool);
+    };
+
     const handleMouseDown = (event: MouseEvent) => {
-        // Custom logic for handleMouseDown
         if (!cityData) {
             console.error("City Data is not initialized!");
             return;
@@ -103,46 +108,54 @@ export function createScene(canvas: HTMLCanvasElement) {
         mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
         mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
 
-        // Set up raycaster
         raycaster.setFromCamera(mouse, camera);
-
-        // Get the intersected objects
         const intersections = raycaster.intersectObjects(scene.children, false);
 
         if (intersections.length > 0) {
             const hitObject = intersections[0].object;
 
-            // Only process mesh objects
             if (hitObject instanceof THREE.Mesh) {
-                // Deselect previously selected object (if any)
+                // Deselect previous selection
                 if (selectedObject && selectedObject.material instanceof THREE.MeshLambertMaterial) {
-                    selectedObject.material.emissive.setHex(0x000000); // Reset emissive color
+                    selectedObject.material.emissive.setHex(0x000000);
                 }
 
-                // Set the new selected object
                 selectedObject = hitObject;
 
-                // Highlight the clicked object
+                // Highlight selected object
                 if (selectedObject.material instanceof THREE.MeshLambertMaterial) {
-                    selectedObject.material.emissive.setHex(0x555555); // Change emissive color to highlight
+                    selectedObject.material.emissive.setHex(0x555555);
                 }
+
                 if (selectedObject.userData) {
                     const { x, y } = selectedObject.userData as { x: number; y: number };
                     const tile = cityData.data[x][y];
                     console.log('Selected Tile:', tile);
 
-                    onObjectSelected(tile)
+                    // Only add building if residential tool is selected
+                    if (selectedTool === 'residential' && !tile.building) {
+                        console.log('Adding building at:', x, y);
+                        const buildingMesh = createAssetInstance('residential', x, y);
+                        if (buildingMesh) {
+                            scene.add(buildingMesh);
+                            if (!buildings[x]) buildings[x] = [];
+                            buildings[x][y] = buildingMesh;
+                            tile.building = 'residential';
+                            console.log('Building added successfully');
+                        }
+                    }
+
+                    onObjectSelected(tile);
                 } else {
                     console.log('No userData found for the selected object!');
                 }
-
             }
         }
 
-        // Call the camera's onMouseDown method (if needed)
         cameraOnMouseDown(event);
     };
 
+            
     // Add event listeners
     const addEventListeners = () => {
         canvas.addEventListener('mousedown', handleMouseDown.bind(scene));
@@ -177,5 +190,6 @@ export function createScene(canvas: HTMLCanvasElement) {
         scene,
         camera,
         renderer,
+        setSelectedTool,
     };
 }
