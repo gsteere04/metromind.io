@@ -7,7 +7,8 @@ const COLORS = {
     grass: 0x00ff00,
     residential: 'blue',
     commercial: 'orange',
-    governmental: 'black'
+    governmental: 'black',
+    road: 'gray'
 };
 
 const assets = { 
@@ -42,7 +43,18 @@ const assets = {
         buildingMesh.position.set(x, 0.5, y);
         return buildingMesh;
     },
+
+    'road': (x: number, y: number) => {
+        const material = new THREE.MeshLambertMaterial({ color: COLORS.road });
+        const roadMesh = new THREE.Mesh(geometry, material);
+        roadMesh.userData = { id: 'road', x, y }
+        roadMesh.position.set(x, 0.05, y);
+        roadMesh.rotation.set(0, 0, 0);
+        roadMesh.scale.set(1, 0.05, 1);
+        return roadMesh;
+    }
 }
+
 
 type AssetId = keyof typeof assets;
 

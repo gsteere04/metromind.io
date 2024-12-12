@@ -145,6 +145,42 @@ export function createScene(canvas: HTMLCanvasElement) {
                         }
                     }
 
+                    if (selectedTool === 'commercial' && !tile.building) {
+                        console.log('Adding building at:', x, y);
+                        const buildingMesh = createAssetInstance('commercial', x, y);
+                        if (buildingMesh) {
+                            scene.add(buildingMesh);
+                            if (!buildings[x]) buildings[x] = [];
+                            buildings[x][y] = buildingMesh;
+                            tile.building = 'commercial';
+                            console.log('Building added successfully');
+                        }
+                    }
+
+                    if (selectedTool === 'governmental' && !tile.building) {
+                        console.log('Adding building at:', x, y);
+                        const buildingMesh = createAssetInstance('governmental', x, y);
+                        if (buildingMesh) {
+                            scene.add(buildingMesh);
+                            if (!buildings[x]) buildings[x] = [];
+                            buildings[x][y] = buildingMesh;
+                            tile.building = 'governmental';
+                            console.log('Building added successfully');
+                        }
+                    }
+
+                    if (selectedTool === 'road' && !tile.building) {
+                        console.log('Adding building at:', x, y);
+                        const buildingMesh = createAssetInstance('road', x, y);
+                        if (buildingMesh) {
+                            scene.add(buildingMesh);
+                            if (!buildings[x]) buildings[x] = [];
+                            buildings[x][y] = buildingMesh;
+                            tile.building = 'road';
+                            console.log('Building added successfully');
+                        }
+                    }
+
                     onObjectSelected(tile);
                 } else {
                     console.log('No userData found for the selected object!');
