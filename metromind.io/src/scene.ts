@@ -181,6 +181,12 @@ export function createScene(canvas: HTMLCanvasElement) {
                         }
                     }
 
+
+                    if (selectedTool === 'bulldoze' && tile.building) {
+                        console.log('Bulldozing at:', x, y);
+                        scene.remove(selectedObject);
+                        tile.building = '';
+                    }
                     onObjectSelected(tile);
                 } else {
                     console.log('No userData found for the selected object!');

@@ -63,6 +63,8 @@ const SimulationPage: React.FC = () => {
             sceneController.setSelectedTool('governmental');
         } else if (toolId === 'roads' && sceneController) {
             sceneController.setSelectedTool('road');
+        } else if (toolId === 'bulldoze' && sceneController) {
+            sceneController.setSelectedTool('bulldoze');
         }
     };
 
