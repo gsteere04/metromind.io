@@ -1,50 +1,47 @@
-# React + TypeScript + Vite
+# MetroMind.io
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web-based city simulation and visualization platform built with React, Three.js, and TypeScript.
 
-Currently, two official plugins are available:
+## 🚀 Live Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Visit [https://gsteere.github.io/metromind.io](https://gsteere.github.io/metromind.io)
 
-## Expanding the ESLint configuration
+## 🛠️ Technologies Used
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- React
+- TypeScript
+- Three.js - 3D graphics
+- React Router - Navigation
+- Vite - Build tool
 
-- Configure the top-level `parserOptions` property like this:
+## 🏃‍♂️ Running Locally
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+# Clone the repository
+git clone https://github.com/gsteere/metromind.io.git
+
+# Navigate to project directory
+cd metromind.io
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## 📦 Building for Production
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+npm run build
 ```
+
+The built files will be in the `dist` directory.
+
+## 🔄 Deployment
+
+The project is automatically deployed to GitHub Pages when changes are pushed to the main branch.
+
+## 📄 License
+
+[MIT](LICENSE)
